@@ -12,7 +12,6 @@ variable "pm_token_id" {
 variable "pm_node" {
     description = "name of the proxmox node to deploy vms on"
     type = string
-    default = "CHANGE_ME"
 }
 
 variable "template_name" {

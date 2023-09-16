@@ -11,6 +11,7 @@ resource "proxmox_vm_qemu" "proxmox_vm_master" {
     bootdisk = "scsi0"
     
     ipconfig0 = "ip=${var.master_ips[count.index]}/${var.networkrange},gw=${var.gateway}"
+    nameserver = "1.1.1.1"
     
     lifecycle {
         ignore_changes = [
@@ -49,6 +50,7 @@ resource "proxmox_vm_qemu" "proxmox_vm_worker" {
     bootdisk = "scsi0"
 
     ipconfig0 = "ip=${var.worker_ips[count.index]}/${var.networkrange},gw=${var.gateway}"
+    nameserver = "1.1.1.1"
 
     lifecycle {
         ignore_changes = [

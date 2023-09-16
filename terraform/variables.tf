@@ -12,7 +12,6 @@ variable "pm_token_id" {
 variable "pm_node" {
     description = "name of the proxmox node to deploy vms on"
     type = string
-    default = "CHANGE_ME"
 }
 
 variable "template_name" {
@@ -62,7 +61,7 @@ variable "networkrange" {
 }
 
 variable "gateway" {
-    default = "192.168.3.1"
+    default = "192.168.0.1"
 }
 
 variable "ssh_key" {

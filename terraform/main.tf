@@ -16,3 +16,53 @@ module "proxmox" {
     gateway = var.gateway
     ssh_key = var.ssh_key
 }
+
+module "k3s" {
+    depends_on_ = module.proxmox
+
+    source  = "xunleii/k3s/module"
+    k3s_version = "v1.27.5+k3s1"
+    k3s_install_env_vars = {
+        "K3S_KUBECONFIG_MODE"="644"
+    }
+    drain_timeout = "60s"
+    managed_fields = ["label"]
+    cidr = {
+        pods     = "10.42.0.0/16"
+        services = "10.43.0.0/16"
+    }
+
+    global_flags = [
+        "--flannel-iface ens10"
+    ]
+
+    servers = {
+        for index, ip in module.proxmox.master_ips :
+        "master-${index}" => {
+            ip = ip
+            connection = {
+                user = "ubuntu"
+                host = ip
+            }
+            flags = ["--flannel-backend=none"]
+            labels = {"node.kubernetes.io/type" = "master"}
+            taints = {"node.k3s.io/type" = "server:NoSchedule"}
+        }
+    }
+    agents = {
+        for index, ip in module.proxmox.worker_ips :
+        "agent-${index}" => {
+            ip = ip
+            connection = {
+                user = "ubuntu"
+                host = ip
+            }
+            labels = {"node.kubernetes.io/pool" = "service-pool"}
+        }
+    }
+}
+
+output "kube_config" {
+    value = module.k3s.kube_config
+    sensitive = true
+}
