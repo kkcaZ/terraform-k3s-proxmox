@@ -73,6 +73,13 @@ module "jx-vault" {
     source = "./jx-vault"
 }
 
+
+module "grafana" {
+    depends_on = [ module.proxmox, module.k3s, local_file.kube_config ]
+    source = "./grafana"
+    grafana_host = var.grafana_host
+}
+
 output "kube_config" {
     value = module.k3s.kube_config
     sensitive = true

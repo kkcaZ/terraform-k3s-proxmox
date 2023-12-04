@@ -74,3 +74,8 @@ variable "helm_config_path" {
     default = "~/.kube/config"
     type = string
 }
+
+variable "grafana_host" {
+    description = "grafana host"
+    type = string
+}
