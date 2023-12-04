@@ -4,6 +4,7 @@ resource "proxmox_vm_qemu" "proxmox_vm_master" {
     target_node = var.pm_node
     clone = var.template_name
     os_type = "cloud-init"
+    qemu_os = "other"
     agent = 1
     memory = var.k3s_master_mem
     cores = 4
@@ -41,6 +42,7 @@ resource "proxmox_vm_qemu" "proxmox_vm_worker" {
     target_node = var.pm_node
     clone = var.template_name
     os_type = "cloud-init"
+    qemu_os = "other"
     agent = 1
     memory = var.k3s_worker_mem
     sockets = 1

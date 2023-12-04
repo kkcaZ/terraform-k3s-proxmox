@@ -26,15 +26,11 @@ module "k3s" {
         "K3S_KUBECONFIG_MODE"="644"
     }
     drain_timeout = "60s"
-    managed_fields = ["label"]
+    managed_fields = ["label", "taint"]
     cidr = {
         pods     = "10.42.0.0/16"
         services = "10.43.0.0/16"
     }
-
-    global_flags = [
-        "--flannel-iface ens10"
-    ]
 
     servers = {
         for index, ip in module.proxmox.master_ips :
@@ -44,7 +40,6 @@ module "k3s" {
                 user = "ubuntu"
                 host = ip
             }
-            flags = ["--flannel-backend=none"]
             labels = {"node.kubernetes.io/type" = "master"}
             taints = {"node.k3s.io/type" = "server:NoSchedule"}
         }
@@ -60,6 +55,14 @@ module "k3s" {
             labels = {"node.kubernetes.io/pool" = "service-pool"}
         }
     }
+}
+
+module "mongodb" {
+    source = "./mongodb"
+}
+
+module "jx-vault" {
+    source = "./jx-vault"
 }
 
 output "kube_config" {
