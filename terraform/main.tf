@@ -57,11 +57,19 @@ module "k3s" {
     }
 }
 
+resource "local_file" "kube_config" {
+    depends_on = [ module.proxmox, module.k3s ]
+    content = module.k3s.kube_config
+    filename = var.helm_config_path
+}
+
 module "mongodb" {
     source = "./mongodb"
+    depends_on = [ module.proxmox, module.k3s, local_file.kube_config ]
 }
 
 module "jx-vault" {
+    depends_on = [ module.proxmox, module.k3s, local_file.kube_config ]
     source = "./jx-vault"
 }
 
